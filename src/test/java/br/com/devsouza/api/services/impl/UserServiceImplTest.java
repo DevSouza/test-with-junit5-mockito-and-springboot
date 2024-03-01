@@ -1,13 +1,18 @@
 package br.com.devsouza.api.services.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.*;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
@@ -58,6 +63,22 @@ class UserServiceImplTest {
 		
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.findById(ID));
 		assertEquals("Objeto não encontrado", exception.getMessage());
+	}
+	
+	@Test
+	void whenFindAllThenReturnAnListOfUsers() {
+		when(repository.findAll()).thenReturn(List.of(user));
+
+		List<User> response = service.findAll();
+		
+		assertNotNull(response);
+		assertEquals(1, response.size());
+		assertEquals(User.class, response.get(0).getClass());
+		
+		assertEquals(ID, response.get(0).getId());
+		assertEquals(NAME, response.get(0).getName());
+		assertEquals(EMAIL, response.get(0).getEmail());
+		assertEquals(PASSWORD, response.get(0).getPassword());
 	}
 
 	private void startUser() {
