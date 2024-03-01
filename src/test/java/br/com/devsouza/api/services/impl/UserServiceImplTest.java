@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import br.com.devsouza.api.domain.User;
 import br.com.devsouza.api.domain.dto.UserDTO;
 import br.com.devsouza.api.repositories.UserRepository;
+import br.com.devsouza.api.services.exceptions.DataIntegratyViolationException;
 import br.com.devsouza.api.services.exceptions.ObjectNotFoundException;
 
 class UserServiceImplTest {
@@ -34,7 +35,8 @@ class UserServiceImplTest {
 	
 	private User user;
 	private UserDTO userDTO;
-	private Optional<User> optinalUser;
+	private Optional<User> optionalUser;
+	private Optional<User> optionalOtherUser;
 	
 	@BeforeEach
 	void setUp() {
@@ -44,7 +46,7 @@ class UserServiceImplTest {
 	
 	@Test
 	void whenFindByIdThenReturnUserInstance() {
-		when(repository.findById(anyInt())).thenReturn(optinalUser);
+		when(repository.findById(anyInt())).thenReturn(optionalUser);
 		
 		User response = service.findById(ID);
 		
@@ -65,7 +67,7 @@ class UserServiceImplTest {
 	}
 	
 	@Test
-	void whenFindAllThenReturnAnListOfUsers() {
+	void whenFindAllThenReturnAListOfUsers() {
 		when(repository.findAll()).thenReturn(List.of(user));
 
 		List<User> response = service.findAll();
@@ -95,10 +97,19 @@ class UserServiceImplTest {
 		assertEquals(PASSWORD, response.getPassword());
 		
 	}
+	
+	@Test
+	void whenCreateThenReturnAnDataIntegrityViolationException() {
+		when(repository.findByEmail(anyString())).thenReturn(optionalOtherUser);
+		
+		DataIntegratyViolationException exception = assertThrows(DataIntegratyViolationException.class, () -> service.create(userDTO));
+		assertEquals("E-mail já cadastrado no sistema.", exception.getMessage());
+	}
 
 	private void startUser() {
 		user = new User(ID, NAME, EMAIL, PASSWORD);
 		userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
-		optinalUser = Optional.of(user);
+		optionalUser = Optional.of(user);
+		optionalOtherUser = Optional.of(new User(2, NAME, EMAIL, PASSWORD));
 	}
 }
