@@ -1,10 +1,9 @@
 package br.com.devsouza.api.services.impl;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +78,22 @@ class UserServiceImplTest {
 		assertEquals(NAME, response.get(0).getName());
 		assertEquals(EMAIL, response.get(0).getEmail());
 		assertEquals(PASSWORD, response.get(0).getPassword());
+	}
+	
+	@Test
+	void whenCreateThenReturnSuccess() {
+		when(repository.save(any())).thenReturn(user);
+		
+		User response = service.create(userDTO);
+		
+		assertNotNull(response);
+		
+		assertEquals(User.class, response.getClass());
+		assertEquals(ID, response.getId());
+		assertEquals(NAME, response.getName());
+		assertEquals(EMAIL, response.getEmail());
+		assertEquals(PASSWORD, response.getPassword());
+		
 	}
 
 	private void startUser() {
