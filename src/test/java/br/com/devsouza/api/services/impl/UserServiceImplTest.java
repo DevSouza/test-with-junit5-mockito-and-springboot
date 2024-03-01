@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import br.com.devsouza.api.domain.User;
 import br.com.devsouza.api.domain.dto.UserDTO;
 import br.com.devsouza.api.repositories.UserRepository;
+import br.com.devsouza.api.services.exceptions.ObjectNotFoundException;
 
 class UserServiceImplTest {
 	private static final int ID 		 = 1;
@@ -49,6 +50,14 @@ class UserServiceImplTest {
 		assertEquals(ID, response.getId());
 		assertEquals(NAME, response.getName());
 		assertEquals(EMAIL, response.getEmail());
+	}
+	
+	@Test
+	void whenFindByIdThenAnObjectNotFoundException() {
+		when(repository.findById(anyInt())).thenReturn(Optional.empty());
+		
+		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.findById(ID));
+		assertEquals("Objeto não encontrado", exception.getMessage());
 	}
 
 	private void startUser() {
