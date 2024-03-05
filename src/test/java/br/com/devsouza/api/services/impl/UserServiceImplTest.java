@@ -18,7 +18,7 @@ import org.modelmapper.ModelMapper;
 import br.com.devsouza.api.domain.User;
 import br.com.devsouza.api.domain.dto.UserDTO;
 import br.com.devsouza.api.repositories.UserRepository;
-import br.com.devsouza.api.services.exceptions.DataIntegratyViolationException;
+import br.com.devsouza.api.services.exceptions.DataIntegrityViolationException;
 import br.com.devsouza.api.services.exceptions.ObjectNotFoundException;
 
 class UserServiceImplTest {
@@ -102,7 +102,7 @@ class UserServiceImplTest {
 	void whenCreateThenReturnAnDataIntegrityViolationException() {
 		when(repository.findByEmail(anyString())).thenReturn(optionalOtherUser);
 		
-		DataIntegratyViolationException exception = assertThrows(DataIntegratyViolationException.class, () -> service.create(userDTO));
+		DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> service.create(userDTO));
 		assertEquals("E-mail já cadastrado no sistema.", exception.getMessage());
 	}
 
@@ -126,7 +126,7 @@ class UserServiceImplTest {
 	void whenUpdateThenReturnAnDataIntegrityViolationException() {
 		when(repository.findByEmail(anyString())).thenReturn(optionalOtherUser);
 		
-		DataIntegratyViolationException exception = assertThrows(DataIntegratyViolationException.class, () -> service.update(userDTO));
+		DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> service.update(userDTO));
 		assertEquals("E-mail já cadastrado no sistema.", exception.getMessage());
 	}
 	
