@@ -38,7 +38,7 @@ public class UserResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<UserDTO> create(@RequestBody UserDTO obj) {
+	public ResponseEntity<?> create(@RequestBody UserDTO obj) {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(userService.create(obj).getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
