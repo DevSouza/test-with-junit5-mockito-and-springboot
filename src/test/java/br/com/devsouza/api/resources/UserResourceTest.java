@@ -1,11 +1,16 @@
 package br.com.devsouza.api.resources;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +25,6 @@ import org.springframework.http.ResponseEntity;
 import br.com.devsouza.api.domain.User;
 import br.com.devsouza.api.domain.dto.UserDTO;
 import br.com.devsouza.api.services.UserService;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
@@ -118,6 +119,18 @@ class UserResourceTest {
 		assertEquals(ID, response.getBody().getId());
 		assertEquals(NAME, response.getBody().getName());
 		assertEquals(EMAIL, response.getBody().getEmail());
+	}
+	
+	@Test
+	void whenDeleteThenReturnSuccess() {
+		doNothing().when(userService).delete(anyInt());
+		
+		ResponseEntity<?> response = userResource.delete(ID);
+		
+		assertNotNull(response);
+		assertNull(response.getBody());
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+		verify(userService, times(1)).delete(anyInt());
 	}
 	
 	private void startUser() {
