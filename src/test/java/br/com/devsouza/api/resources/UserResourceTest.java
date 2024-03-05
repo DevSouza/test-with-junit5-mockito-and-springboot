@@ -1,6 +1,7 @@
 package br.com.devsouza.api.resources;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -12,10 +13,14 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import br.com.devsouza.api.domain.User;
 import br.com.devsouza.api.domain.dto.UserDTO;
 import br.com.devsouza.api.services.UserService;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
@@ -41,6 +46,24 @@ class UserResourceTest {
 		startUser();
 	}
 
+	@Test
+	void whenFindByIdReturnSuccess() {
+		when(userService.findById(anyInt())).thenReturn(user);
+		when(mapper.map(any(), any())).thenReturn(userDTO);
+		
+		ResponseEntity<UserDTO> response = userResource.findById(ID);
+		
+		assertNotNull(response);
+		assertNotNull(response.getBody());
+		assertEquals(ResponseEntity.class, response.getClass());
+		assertEquals(UserDTO.class, response.getBody().getClass());
+		
+		assertEquals(ID, response.getBody().getId());
+		assertEquals(NAME, response.getBody().getName());
+		assertEquals(EMAIL, response.getBody().getEmail());
+		assertEquals(PASSWORD, response.getBody().getPassword());
+	}
+	
 	private void startUser() {
 		user = new User(ID, NAME, EMAIL, PASSWORD);
 		userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
