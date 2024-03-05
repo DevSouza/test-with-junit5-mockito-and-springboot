@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import br.com.devsouza.api.services.exceptions.DataIntegrityViolationException;
 import br.com.devsouza.api.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
@@ -36,7 +37,24 @@ class ResourceExceptionHandlerTest {
 		assertEquals(StandardError.class, response.getBody().getClass());
 		assertEquals("Objeto não encontrado", response.getBody().getError());
 		assertEquals(404, response.getBody().getStatus());
+		assertNotNull(response.getBody().getTimestamp());
+		assertNotNull(response.getBody().getPath());
+	}
+	
+	@Test
+	void whenDataIntegrityViolationExceptionAStandardError() {
+		ResponseEntity<StandardError> response = exceptionHandler.dataIntegrityViolationException(new DataIntegrityViolationException("E-mail já cadastrado"), new MockHttpServletRequest());
 		
+		assertNotNull(response);
+		assertNotNull(response.getBody());
+		
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals(ResponseEntity.class, response.getClass());
+		assertEquals(StandardError.class, response.getBody().getClass());
+		assertEquals("E-mail já cadastrado", response.getBody().getError());
+		assertEquals(400, response.getBody().getStatus());
+		assertNotNull(response.getBody().getTimestamp());
+		assertNotNull(response.getBody().getPath());
 	}
 
 }
