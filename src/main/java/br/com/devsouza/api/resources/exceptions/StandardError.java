@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter @Setter
+@Getter
 @AllArgsConstructor
 public class StandardError {
 
