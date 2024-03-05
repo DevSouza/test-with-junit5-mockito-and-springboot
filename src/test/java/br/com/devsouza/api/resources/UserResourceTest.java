@@ -3,6 +3,8 @@ package br.com.devsouza.api.resources;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import br.com.devsouza.api.domain.User;
@@ -55,6 +58,7 @@ class UserResourceTest {
 		
 		assertNotNull(response);
 		assertNotNull(response.getBody());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertEquals(ResponseEntity.class, response.getClass());
 		assertEquals(UserDTO.class, response.getBody().getClass());
 		
@@ -62,6 +66,40 @@ class UserResourceTest {
 		assertEquals(NAME, response.getBody().getName());
 		assertEquals(EMAIL, response.getBody().getEmail());
 		assertEquals(PASSWORD, response.getBody().getPassword());
+	}
+	
+	@Test
+	void whenFindAllReturnSuccess() {
+		when(userService.findAll()).thenReturn(List.of(user));
+		when(mapper.map(any(), any())).thenReturn(userDTO);
+		
+		ResponseEntity<List<UserDTO>> response = userResource.findAll();
+		
+		assertNotNull(response);
+		assertNotNull(response.getBody());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(ResponseEntity.class, response.getClass());
+		//assertEquals(ArrayList.class, response.getBody().getClass());
+		assertEquals(UserDTO.class, response.getBody().get(0).getClass());
+		
+		assertEquals(ID, response.getBody().get(0).getId());
+		assertEquals(NAME, response.getBody().get(0).getName());
+		assertEquals(EMAIL, response.getBody().get(0).getEmail());
+		assertEquals(PASSWORD, response.getBody().get(0).getPassword());
+	}
+	
+	@Test
+	void whenCreateThenReturnCreated() {
+		when(userService.create(any())).thenReturn(user);
+		
+		ResponseEntity<?> response = userResource.create(userDTO);
+		
+		assertNotNull(response);
+		assertNull(response.getBody());
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals(ResponseEntity.class, response.getClass());
+		
+		assertNotNull(response.getHeaders().getLocation());
 	}
 	
 	private void startUser() {
